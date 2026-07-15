@@ -3,7 +3,7 @@
 
 if [ ! -f secrets/.hf_token ]; then
   echo "Error: secrets/.hf_token file does not exist. Please create the file with your HuggingFace token."
-  exit 1
+  return
 fi
 
 # Define Google Cloud infra options
