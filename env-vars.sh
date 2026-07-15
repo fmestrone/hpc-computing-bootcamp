@@ -1,11 +1,6 @@
 #!/bin/bash
 # shellcheck disable=SC2155
 
-if [ ! -f secrets/.hf_token ]; then
-  echo "Error: secrets/.hf_token file does not exist. Please create the file with your HuggingFace token."
-  return
-fi
-
 # Define Google Cloud infra options
 export PROJECT_ID=$(gcloud config get-value project)
 export REGION=us-east1
@@ -16,12 +11,23 @@ export IP_RANGE_POD=10.3.0.0/16
 export IP_RANGE_SVC=10.9.0.0/16
 export LWS_VERSION=v0.8.0
 
-# The HuggingFace read-only token
-export HF_TOKEN=$(cat secrets/.hf_token)
-
 # Derived variables
 export VPC_NAME=${APP_NAME}-net
+export VPC_SUBNET=${VPC_NAME}-subnet-1
+export VPC_FW_INTERNAL=${VPC_NAME}-allow-internal
+export VPC_FW_OTHER=${VPC_NAME}-allow-ssh-rdp-icmp
 export CLUSTER_L4_NAME=${APP_NAME}-l4-cluster
 export BUCKET_NAME=${APP_NAME}-bucket
+export SVCACC_GSA=${APP_NAME}-gsa
+export SVCACC_KSA=${APP_NAME}-ksa
 export BASTION_VM_NAME=${APP_NAME}-bastion
 export LUSTRE_INSTANCE=${APP_NAME}-lustre
+
+if [ ! -f secrets/.hf_token ]; then
+  echo "WARNING: secrets/.hf_token file does not exist!"
+  echo "Please create the file and copy your HuggingFace token in it, if you plan to use HuggingFace to download model weights."
+  return
+fi
+
+# The HuggingFace read-only token
+export HF_TOKEN=$(cat secrets/.hf_token)
